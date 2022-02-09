@@ -1,4 +1,3 @@
-import pprint
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -16,7 +15,7 @@ def openLinkedin(input_name) -> object:
     driver.implicitly_wait(30)
     email = driver.find_element(By.NAME,'session_key')
     driver.implicitly_wait(30)
-    email.send_keys('email@gmail.com')
+    email.send_keys('email.com')
     driver.implicitly_wait(30)
     password = driver.find_element(By.NAME,'session_password')
     driver.implicitly_wait(30)
@@ -34,12 +33,23 @@ def openLinkedin(input_name) -> object:
     desription = " nie znalziono opisu lub firma nie ma profilu na LinkedIn "
     try:
         finding_result == input_name
+
         driver.find_element(By.XPATH, finding_result_xpath).click()
+        print(driver.current_url)
         desription = driver.find_element(By.XPATH,
                                        "//section/div/div/div[contains(@class,'t-14 t-black--light full-width break-words lt-line-clamp lt-line-clamp--multi-line ember-view')]").text
         print("opis istnieje")
+
     except TypeError:
         print("Nie znaleziono firmy na LinkedIn")
+    else:
+        input_name == finding_result
+        driver.find_element(By.XPATH, finding_result_xpath).click()
+        cur_link =driver.current_url
+        desription = driver.find_element(By.XPATH,
+                                         "//section/div/div/div[contains(@class,'t-14 t-black--light full-width break-words lt-line-clamp lt-line-clamp--multi-line ember-view')]").text
+        print("opis istnieje")
+
     finally:
         return desription
 
@@ -52,11 +62,17 @@ def printDescription():
         with open("company.txt", "r") as input_file:
             with open("description.txt", "a") as output_file:
                 for line in input_file.readlines():
-                    result = openLinkedin(line)
-                    output_file.write(line + ";" + str(result) + "\n")
-                    print("opis powinien być w pliku: " + result)
+                    try:
+                        result = openLinkedin(line)
+                        output_file.write(line + ";" + str(result) + "\n")
+                        print("opis powinien być w pliku: " + result)
+
+                    except:
+                        print(line + " nie udało sie zapisac do pilku")
     except:
-        print("nie udało sie zpaisac do pilku")
+        print("nie udało sie otworzyć pliku")
+
+
     input_file.close()
     output_file.close()
 
